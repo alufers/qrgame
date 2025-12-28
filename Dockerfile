@@ -22,5 +22,8 @@ COPY --from=builder /app/main /main
 # Expose port
 EXPOSE 3000
 
+# Set default DB path
+ENV DB_PATH=/data/qrgame.db
+
 # Run
 CMD ["/main"]

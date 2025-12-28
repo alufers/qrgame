@@ -24,7 +24,12 @@ type Scan struct {
 }
 
 func main() {
-	db, err := gorm.Open(sqlite.Open("qrgame.db"), &gorm.Config{})
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "qrgame.db"
+	}
+
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}

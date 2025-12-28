@@ -7,7 +7,11 @@
     docker-compose up --build
     ```
 2.  Access the game at `http://localhost:3000`.
-3.  The database `qrgame.db` will be persisted in the current directory.
+3.  The database will be persisted in the `./data` directory (mapped to `/data` in the container).
+
+## Configuration
+
+- `DB_PATH`: Path to the SQLite database file. Defaults to `qrgame.db` locally, or `/data/qrgame.db` in Docker.
 
 ## Development
 
