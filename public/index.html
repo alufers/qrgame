@@ -14,6 +14,7 @@
             border-bottom: 1px solid #0f0;
             padding-bottom: 0.5rem;
             align-items: center;
+            flex-wrap: wrap;
         }
         nav a { 
             cursor: pointer; 
@@ -85,9 +86,12 @@
             left: 0;
             height: 100%;
             background-color: #003300;
-            z-index: -1;
+            z-index: 0;
             width: 0%;
-            transition: width 100ms linear;
+        }
+        #resume-btn span {
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
@@ -149,11 +153,19 @@
         <div id="codes-view" class="view">
             <h2>MOST SCANNED QR CODES</h2>
             <table id="codes-table">
-                <thead><tr><th>TARGET_ID</th><th>CAPTURES</th></tr></thead>
+                <thead><tr><th>QR CODE</th><th>SCANS</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
     </div>
+
+    <p>
+        Made by alufers
+
+        <br><br>
+
+        
+    </p>
 
     <script src="qr-scanner.umd.min.js"></script>
     <script src="app.js"></script>

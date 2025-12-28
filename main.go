@@ -1,7 +1,10 @@
 package main
 
 import (
+	"embed"
+	"io/fs"
 	"log"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -9,6 +12,9 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+//go:embed public/*
+var embedDir embed.FS
 
 type Scan struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
@@ -28,7 +34,19 @@ func main() {
 
 	app := fiber.New()
 
-	app.Use("/", static.New("./public"))
+	if _, err := os.Stat("./public"); os.IsNotExist(err) {
+		log.Println("Serving embedded assets")
+		subFS, err := fs.Sub(embedDir, "public")
+		if err != nil {
+			log.Fatal(err)
+		}
+		app.Use("/", static.New("", static.Config{
+			FS: subFS,
+		}))
+	} else {
+		log.Println("Serving assets from ./public")
+		app.Use("/", static.New("./public"))
+	}
 
 	app.Post("/api/scanned", func(c fiber.Ctx) error {
 		var req struct {

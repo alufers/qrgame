@@ -10,24 +10,15 @@ const app = {
     init: function() {
         this.updateNavUser();
         
-        if (!this.username) {
-            $('#username-section').style.display = 'block';
-            $('#main-app').style.display = 'block'; // Show app but maybe restrict scan if needed (current flow allows nav)
-            $('#save-username-btn').addEventListener('click', () => {
-                const input = $('#username-input').value.trim();
-                if (input) {
-                    this.username = input;
-                    localStorage.setItem('qrgame_username', input);
-                    $('#username-section').style.display = 'none';
-                    this.updateNavUser();
-                    this.initScanner();
-                }
-            });
-        } else {
-            $('#username-section').style.display = 'none';
-            $('#main-app').style.display = 'block';
-            this.initScanner();
-        }
+        $('#save-username-btn').addEventListener('click', () => {
+            const input = $('#username-input').value.trim();
+            if (input) {
+                this.username = input;
+                localStorage.setItem('qrgame_username', input);
+                this.updateNavUser();
+                this.showView('scan');
+            }
+        });
 
         this.showView('scan'); // Default view
     },
@@ -66,10 +57,15 @@ const app = {
         );
         this.scanner.start();
     },
+    
+    // ... handleScan remains the same ...
 
     handleScan: async function(result) {
         if (!this.username) {
+             // Should not happen with new view logic, but good safety
+             this.scanner.stop();
              alert("IDENTITY REQUIRED. PLEASE ENTER USERNAME.");
+             this.showView('scan');
              return;
         }
 
@@ -116,6 +112,8 @@ const app = {
 
         this.startResumeTimer();
     },
+    
+    // ... startResumeTimer / manualResume remain same ...
 
     startResumeTimer: function() {
         $('#scan-resume-container').style.display = 'block';
@@ -147,12 +145,29 @@ const app = {
     },
 
     showView: function(viewName) {
+        // Hide logic
+        $('#username-section').style.display = 'none';
+        $('#main-app').style.display = 'none';
         document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-        $(`#${viewName}-view`).classList.add('active');
 
+        // Logic for Scan View
         if (viewName === 'scan') {
-            if (this.scanner && this.username) this.scanner.start();
+            if (!this.username) {
+                $('#username-section').style.display = 'block';
+                if (this.scanner) this.scanner.stop(); // Ensure scanner stops if we go back to username
+                return;
+            }
+            
+            $('#main-app').style.display = 'block';
+            $('#scan-view').classList.add('active');
+            this.initScanner(); // Ensure scanner checks init
+            if (this.scanner) this.scanner.start();
+
         } else {
+            // Leaderboards
+            $('#main-app').style.display = 'block';
+            $(`#${viewName}-view`).classList.add('active');
+            
             if (this.scanner) this.scanner.stop();
             // Cancel timer if leaving scan view
             if (this.resumeTimer) cancelAnimationFrame(this.resumeTimer);
