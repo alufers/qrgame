@@ -1,0 +1,161 @@
+    <style>
+        body { 
+            font-family: 'Courier New', Courier, monospace; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 1rem; 
+            background-color: black;
+            color: #0f0;
+        }
+        nav { 
+            margin-bottom: 1rem; 
+            display: flex; 
+            gap: 1rem; 
+            border-bottom: 1px solid #0f0;
+            padding-bottom: 0.5rem;
+            align-items: center;
+        }
+        nav a { 
+            cursor: pointer; 
+            text-decoration: underline; 
+            color: #0f0; 
+        }
+        nav a:hover {
+            color: #fff;
+        }
+        .user-info {
+            margin-left: auto;
+            font-size: 0.8em;
+        }
+        .logout-btn {
+            background: none;
+            border: 1px solid #0f0;
+            color: #0f0;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            font-family: inherit;
+        }
+        .logout-btn:hover {
+            background: #0f0;
+            color: black;
+        }
+
+        .view { display: none; }
+        .view.active { display: block; }
+        
+        video { width: 100%; border: 2px solid #0f0; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; border: 1px solid #0f0; }
+        th, td { border: 1px solid #0f0; padding: 0.5rem; text-align: left; }
+        th { background-color: #003300; }
+        
+        input {
+            background: black;
+            border: 1px solid #0f0;
+            color: #0f0;
+            padding: 0.5rem;
+            font-family: inherit;
+        }
+        button {
+            background: black;
+            border: 1px solid #0f0;
+            color: #0f0;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        button:hover {
+            background: #0f0;
+            color: black;
+        }
+
+        #scan-result { margin-top: 1rem; font-weight: bold; border: 1px dashed #0f0; padding: 1rem; min-height: 2rem; }
+        .error { color: red; border-color: red !important; }
+        
+        #scan-resume-container { margin-top: 1rem; display: none; }
+        #resume-btn {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            text-align: center;
+        }
+        #resume-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #003300;
+            z-index: -1;
+            width: 0%;
+            transition: width 100ms linear;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR CODE HUNT</h1>
+    <p>Objective: Scan as many QR codes as possible</p>
+    
+    <nav id="main-nav">
+        <a onclick="app.showView('scan')" style="font-weight: bold;">SCAN</a>
+        <a onclick="app.showView('players')">PLAYERS</a>
+        <a onclick="app.showView('codes')">CODES</a>
+        <div id="nav-user-info" class="user-info" style="display: none;">
+             <span id="nav-username"></span> 
+             <button class="logout-btn" onclick="app.logout()">[LOGOUT]</button>
+        </div>
+    </nav>
+
+    <div id="username-section" style="display: none;">
+        <p>IDENTIFY YOURSELF:</p>
+        <input type="text" id="username-input" placeholder="USERNAME">
+
+       
+
+        <button id="save-username-btn">INITIALIZE</button>
+
+        <br><br><br><br>
+         <div>
+            <strong>RULES:</strong>
+            <ul>
+                <li>Scan only QR codes fount at 39C3 (on posters, stickers etc.)</li>
+                <li>Don't cheat by mass-generating QR codes</li>
+                <li>Don't scan QR codes which contain sensitive information (TOTP recovery codes etc.)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <div id="scan-view" class="view active">
+            <h2>SCAN</h2>
+            <video></video>
+            <div id="scan-result">WAITING FOR TARGET...</div>
+            
+            <div id="scan-resume-container">
+                <button id="resume-btn" onclick="app.manualResume()">
+                    <div id="resume-progress"></div>
+                    <span>BACK TO SCANNING [SKIP]</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="players-view" class="view">
+            <h2>PLAYER</h2>
+            <table id="players-table">
+                <thead><tr><th>PLAYER</th><th>QR CODES SCANNED</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="codes-view" class="view">
+            <h2>MOST SCANNED QR CODES</h2>
+            <table id="codes-table">
+                <thead><tr><th>TARGET_ID</th><th>CAPTURES</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="qr-scanner.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
